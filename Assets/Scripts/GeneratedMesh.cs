@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +11,12 @@ public class GeneratedMesh : MonoBehaviour
     public Vector3[] vertex;
     public Vector2[] uvmap;
     public int[] triangles;
+    public float speed = 0.1f;
+
     private MeshFilter filter;
-    
+
+    private float deltaUV = 0;
+
     private void Start()
     {
         CreateMesh();
@@ -55,11 +60,11 @@ public class GeneratedMesh : MonoBehaviour
             new Vector3( -1, 1, 1),     // vertice 21
             new Vector3( -1, -1, 1),    // vertice 22
             new Vector3( 1, -1, 1),     // vertice 23
-        };   
+        };
 
         // poligonos
         triangles = new int[] { // cara superior
-                                4,5,6, 
+                                4,5,6,
                                 4,6,7,
                                 // cara inferior
                                 0,2,1,
@@ -78,21 +83,26 @@ public class GeneratedMesh : MonoBehaviour
                                 20,22,23,
                                 };
         // uv map
+        float xs1 = deltaUV * speed;
+        float xs2 = 0.125f + deltaUV * speed;
+
+        float xf1 = 0.125f + deltaUV * speed;
+        float xf2 = 0.250f + deltaUV * speed;
         uvmap = new Vector2[] { /* vertices inferiores */
                                 new Vector2(0.75f,1),
                                 new Vector2(0.625f,1),
                                 new Vector2(0.625f,0.875f),
                                 new Vector2(0.75f,0.875f),
                                 /* vertices superiores */
-                                new Vector2(0,1),
-                                new Vector2(0.125f,1),
-                                new Vector2(0.125f,0.875f),
-                                new Vector2(0,0.875f),
+                                new Vector2(xs1,1),
+                                new Vector2(xs2,1),
+                                new Vector2(xs2,0.875f),
+                                new Vector2(xs1,0.875f),
                                 /* vertices frontales */
-                                new Vector2(0.125f,1),
-                                new Vector2(0.250f,1),
-                                new Vector2(0.250f,0.875f),
-                                new Vector2(0.125f,0.875f),
+                                new Vector2(xf1,1),
+                                new Vector2(xf2,1),
+                                new Vector2(xf2,0.875f),
+                                new Vector2(xf1,0.875f),
                                 /* vertices derecho */
                                 new Vector2(0.250f,1),
                                 new Vector2(0.375f,1),
@@ -109,6 +119,7 @@ public class GeneratedMesh : MonoBehaviour
                                 new Vector2(0.625f,0.875f),
                                 new Vector2(0.5f,0.875f),
                                };
+        deltaUV += Time.deltaTime;
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertex;
