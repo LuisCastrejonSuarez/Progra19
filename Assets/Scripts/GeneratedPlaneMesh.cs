@@ -35,36 +35,51 @@ public class GeneratedPlaneMesh : MonoBehaviour
             {
                 int idx = (i * rows + j) * 6;
 
-                vertex[idx]     = new Vector3(i,   0, j);
-                vertex[idx + 1] = new Vector3(i+1, 0, j);
-                vertex[idx + 2] = new Vector3(i,   0, j+1);
+                /* animación, se cambia la altura según la función senoidal */
+                float deltasin1 = Mathf.Sin(Time.time + i-j)*0.5f;
+                float deltasin2 = Mathf.Sin(Time.time + i-j+1) * 0.5f;
 
-                vertex[idx + 3] = new Vector3(i+1, 0, j);
-                vertex[idx + 4] = new Vector3(i+1, 0, j+1);
-                vertex[idx + 5] = new Vector3(i,   0, j+1);
+                vertex[idx]     = new Vector3(i,    deltasin1, j);
+                vertex[idx + 1] = new Vector3(i+1,  deltasin2, j);
+                vertex[idx + 2] = new Vector3(i,    deltasin1, j+1);
+
+                vertex[idx + 3] = new Vector3(i+1,  deltasin2, j);
+                vertex[idx + 4] = new Vector3(i+1,  deltasin2, j+1);
+                vertex[idx + 5] = new Vector3(i,    deltasin1, j+1);
             }
         }    
 
         // poligonos
         triangles = new int[rows * columns * 6];
 
+        for (int i = 0; i < triangles.Length; ++i)
+        {
+            triangles[i] = i;
+        }
+
+        // uv map
+        uvmap = new Vector2[columns * rows * 6];
+
         for (int i = 0; i < columns; ++i)
         {
             for (int j = 0; j < rows; ++j)
             {
-                triangles[i * rows + j] = i * rows + j;
+                int idx = (i * rows + j) * 6;
+                uvmap[idx] = new Vector2(0.375f, 1f);
+                uvmap[idx+1] = new Vector2(0.5f, 1f);
+                uvmap[idx+2] = new Vector2(0.375f, 0.875f);
+
+                uvmap[idx+3] = new Vector2(0.5f, 1f);
+                uvmap[idx+4] = new Vector2(0.5f, 0.875f);
+                uvmap[idx+5] = new Vector2(0.375f, 0.875f);
             }
         }
-
-        // uv map
-        uvmap = new Vector2[] { };
-
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertex;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
-        //mesh.uv = uvmap;
+        mesh.uv = uvmap;
         filter = gameObject.GetComponent<MeshFilter>();
         filter.mesh = mesh;
     }
